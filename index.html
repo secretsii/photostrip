@@ -553,20 +553,32 @@ body {
     margin-bottom: auto;
 }
 
+/* Center page 1 on mobile WITHOUT breaking layout */
 @media (max-width: 600px) {
-    .verification-container,
-    .verification-box,
-    .verify-box,
-    .verify-container {
-        /* salah satu nama ini pasti ada di HTML kamu */
-        margin-left: auto !important;
-        margin-right: auto !important;
-        margin-top: 60px !important;
-        margin-bottom: 60px !important;
-        display: block !important;
+    .page-1 {
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        align-items: flex-start !important;
+    }
+
+    .verification-panel {
+        margin: auto !important;
     }
 }
 
+
+
+/* ================================
+   CENTER PAGE 2 (PHOTOBOX)
+   ================================ */
+@media (max-width: 600px) {
+    .photobox-container {
+        margin-top: 60px !important;
+        margin-bottom: 60px !important;
+    }
+}
 
 
 
