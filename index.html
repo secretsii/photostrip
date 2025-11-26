@@ -64,6 +64,22 @@
             margin-bottom: 16px;
         }
 
+        .verify-header {
+    background: #3a2dd5;
+    padding: 20px;
+    border-radius: none;
+    text-align: left;
+    margin-bottom: 15px;  /* JARAK DARI FOTO */
+}
+
+.verify-header h2,
+.verify-header p {
+    color: white !important;
+    margin: 0;
+}
+
+
+
         .google-logo {
             width: 24px;
             height: 24px;
@@ -93,7 +109,7 @@
         .image-item {
             width: 100%;
             aspect-ratio: 1;
-            border-radius: 5px;
+            border-radius: 0px;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -117,7 +133,7 @@
             background-color: #4285f4;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 0px;
             padding: 10px 0;
             font-size: 14px;
             font-weight: 500;
@@ -142,8 +158,11 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #ffd6e7 0%, #ffefd6 100%);
-            padding: 20px;
+                background-image: url('images/bg2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
             position: relative;
             overflow: hidden;
         }
@@ -406,6 +425,109 @@
             0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
         }
+
+        /* ===========================
+   RESPONSIVE FIX MOBILE VIEW
+   =========================== */
+
+@media (max-width: 600px) {
+
+    body {
+        overflow-y: auto !important;
+    }
+
+    /* PAGE 1 — VERIFICATION  */
+    .page-1 {
+        padding: 15px;
+        align-items: flex-start;
+    }
+
+    .verification-panel {
+        width: 100%;
+        max-width: 360px;
+        padding: 18px;
+        margin-top: 20px;
+        border-radius: 10px;
+    }
+
+    .panel-title {
+        font-size: 16px;
+    }
+
+    .instructions {
+        font-size: 13px;
+    }
+
+    .image-grid {
+        gap: 6px;
+    }
+
+    .image-item {
+        border-radius: 2px;
+    }
+
+    .verify-btn {
+        padding: 12px 0;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+    /* PAGE 2 — PHOTOBOX */
+    .page-2 {
+        padding: 15px;
+        background-image: url('images/bg2.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        justify-content: flex-start !important;
+    }
+
+    .photobox-container {
+        width: 100%;
+        max-width: 380px;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(6px);
+    }
+
+    .photobox-header {
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .photobox-progress {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    .photo-display {
+        height: 360px;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .photo-strip {
+        max-width: 260px;
+        border-radius: 10px;
+    }
+
+    .photo-frame {
+        height: 130px;
+        border-radius: 6px;
+    }
+
+    .photo-btn {
+        font-size: 13px;
+        padding: 10px 18px;
+    }
+
+    .scroll-indicator {
+        font-size: 9px;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -415,12 +537,10 @@
     <div class="page-1" id="page1">
         <div class="background"></div>
         <div class="verification-panel">
-            <div class="panel-header">
-                <div class="panel-title">Verify you're human</div>
-            </div>
-            <div class="instructions">
-                Select all images with <strong>cats</strong> to continue.
-            </div>
+            <div class="verify-header">
+    <h2>verify that you are my bf</h2>
+    <p>select all images that makes you fall in love</p>
+</div>
             <div class="image-grid" id="imageGrid">
                 <!-- Images will be dynamically added here -->
             </div>
@@ -547,7 +667,7 @@ setTimeout(() => {
 
             } else {
                 // Reset selection on incorrect attempt
-                alert('Incorrect selection. Please select all images with cats and try again.');
+                alert('Incorrect selection. Please select all images that makes you fall in love and try again.');
                 selectedImages.forEach(index => {
                     const imageItem = document.querySelector(`.image-item[data-index="${index}"]`);
                     imageItem.classList.remove('selected');
