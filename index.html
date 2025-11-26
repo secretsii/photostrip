@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification & Photo Printing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Page 1: Verification Panel */
+        .page-1 {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: opacity 0.8s ease;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/bg.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.7);
+            z-index: -1;
+        }
+
+        .verification-panel {
+            background-color: white;
+            width: 400px;
+            border-radius: 0px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .google-logo {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+        }
+
+        .instructions {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .image-item {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 0px solid transparent;
+            position: relative;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-item.selected {
+            border-color: #4285f4;
+            box-shadow: 0 0 0 2px #e8f0fe;
+        }
+
+        .verify-btn {
+            width: 100%;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 0;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .verify-btn:hover {
+            background-color: #3367d6;
+        }
+
+        .verify-btn:disabled {
+            background-color: #dadce0;
+            cursor: not-allowed;
+        }
+
+        /* Page 2: Photo Strip Machine - FROM GAME BOY CODE */
+        .page-2 {
+            height: 100vh;
+            width: 100vw;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffd6e7 0%, #ffefd6 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photobox-container {
+            width: 90%;
+            max-width: 400px;
+            background-color: #c10000;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: none;
+            position: relative;
+        }
+
+        .photobox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #798ff0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .photobox-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .photobox-dot.red {
+            background: #ffe600;
+        }
+
+        .photobox-dot.green {
+            background: #00ff62;
+        }
+
+        .photobox-title {
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .photobox-progress {
+            background: #798ff0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            color: #fffb00;
+            font-size: 14px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .photo-display {
+            background: #000000;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 15px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 400px;
+            border: 3px solid #798ff0;
+        }
+
+        .photo-display {
+    scrollbar-width: none; /* Firefox */
+}
+
+.photo-display::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+
+        /* Photo Strip Styles - FROM GAME BOY CODE */
+        .photo-strip {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 320px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            min-height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-strip-header {
+            text-align: center;
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 15px 10px 10px 10px;
+            border-bottom: 2px solid #ccc;
+            background: #ffffff;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .photo-frames-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 300px;
+        }
+
+        .photo-frame {
+            width: 100%;
+            height: 150px;
+            background: #ffffff;
+            border: 3px solid #333;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .photo-frame.filled {
+            background: none;
+            color: white;
+            transform: scale(1.02);
+            box-shadow: 0 
+            3px 6px rgba(0,0,0,0.2);
+        }
+
+        .photo-placeholder {
+    color: #ffffff; /* ganti warna di sini */
+    text-align: center; /* opsional */
+}
+
+
+        .photo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 3px;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 10px 6px 6px 6px;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .photo-content {
+            color: rgb(0, 0, 0);
+            font-size: 11px;
+            text-align: center;
+            padding: 5px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .photo-strip-footer {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            font-weight: bold;
+            background: #ffffff;
+            padding: 10px;
+            border-top: 2px solid #ccc;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .photobox-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .photo-btn {
+            padding: 12px 24px;
+            background: #798ff0;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .photo-btn:hover {
+            background: #798ff0;
+            transform: translateY(-2px);
+        }
+
+        .photo-btn:disabled {
+            background: #798ff0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: #ffffff;
+            font-size: 10px;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Page 1: Verification Panel -->
+    <div class="page-1" id="page1">
+        <div class="background"></div>
+        <div class="verification-panel">
+            <div class="panel-header">
+                <div class="panel-title">Verify you're human</div>
+            </div>
+            <div class="instructions">
+                Select all images with <strong>cats</strong> to continue.
+            </div>
+            <div class="image-grid" id="imageGrid">
+                <!-- Images will be dynamically added here -->
+            </div>
+            <button class="verify-btn" id="verifyBtn" disabled>Verify</button>
+        </div>
+    </div>
+
+    <!-- Page 2: Photo Strip Machine -->
+    <div class="page-2" id="page2">
+        <div class="photobox-container">
+            <div class="photobox-header">
+                <div class="photobox-dot red"></div>
+                <span class="photobox-title">PHOTOBOX</span>
+                <div class="photobox-dot green"></div>
+            </div>
+            <div class="photobox-progress">READY TO PRINT</div>
+            <div class="photo-display">
+                <div class="photo-placeholder">Press START PRINT to begin photo session</div>
+            </div>
+            <div class="photobox-controls">
+                <button class="photo-btn">START PRINT</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        // Image data - URLs for the grid images
+        const imageData = [
+    { url: 'images/verify1.jpg', isCat: true },
+    { url: 'images/verify2.jpg', isCat: false },
+    { url: 'images/verify3.jpg', isCat: true },
+    { url: 'images/verify4.jpg', isCat: false },
+    { url: 'images/verify5.jpg', isCat: true },
+    { url: 'images/verify6.jpg', isCat: false },
+    { url: 'images/verify7.jpg', isCat: true },
+    { url: 'images/verify8.jpg', isCat: false },
+    { url: 'images/verify9.jpg', isCat: true }
+];
+
+
+        // Photo data from Game Boy code - romantic photos
+        const photos = [
+    { image: 'images/foto1.jpg', text: '' },
+    { image: 'images/foto2.jpg', text: '' },
+    { image: 'images/foto3.jpg', text: '' },
+    { image: 'images/foto4.jpg', text: '' },
+    { image: 'images/foto5.jpg', text: '' },
+    { image: 'images/foto6.jpg', text: '' },
+    { image: 'images/foto7.jpg', text: '' },
+    { image: 'images/foto8.jpg', text: '' }
+];
+
+
+
+        // DOM elements
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const imageGrid = document.getElementById('imageGrid');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const backBtn = document.getElementById('backBtn');
+        const successMessage = document.getElementById('successMessage');
+        const photoDisplay = document.querySelector('.photo-display');
+        const photoBtn = document.querySelector('.photo-btn');
+        const progressDiv = document.querySelector('.photobox-progress');
+
+        // Track selected images
+        let selectedImages = [];
+        let currentPhotoIndex = 0;
+
+        // Initialize the image grid
+        function initImageGrid() {
+            imageGrid.innerHTML = '';
+            
+            // Shuffle the images for variety
+            const shuffledImages = [...imageData].sort(() => Math.random() - 0.5);
+            
+            shuffledImages.forEach((image, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                imageItem.dataset.index = index;
+                imageItem.dataset.isCat = image.isCat;
+                
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.alt = 'Verification image';
+                
+                imageItem.appendChild(img);
+                imageGrid.appendChild(imageItem);
+                
+                // Add click event
+                imageItem.addEventListener('click', () => {
+                    if (imageItem.classList.contains('selected')) {
+                        imageItem.classList.remove('selected');
+                        selectedImages = selectedImages.filter(i => i !== index);
+                    } else {
+                        if (selectedImages.length < 3) {
+                            imageItem.classList.add('selected');
+                            selectedImages.push(index);
+                        }
+                    }
+                    
+                    // Enable verify button if exactly 3 images are selected
+                    verifyBtn.disabled = selectedImages.length !== 3;
+                });
+            });
+        }
+
+        // Verify selection
+        verifyBtn.addEventListener('click', () => {
+            // Check if all selected images are cats
+            const allCats = selectedImages.every(index => {
+                const imageItem = document.querySelector(`.image-item[data-index="${index}"]`);
+                return imageItem.dataset.isCat === 'true';
+            });
+            
+            if (allCats) {
+                // Show success message
+                page1.style.opacity = '0';
+setTimeout(() => {
+    page1.style.display = 'none';
+    page2.style.display = 'flex';
+}, 800);
+
+            } else {
+                // Reset selection on incorrect attempt
+                alert('Incorrect selection. Please select all images with cats and try again.');
+                selectedImages.forEach(index => {
+                    const imageItem = document.querySelector(`.image-item[data-index="${index}"]`);
+                    imageItem.classList.remove('selected');
+                });
+                selectedImages = [];
+                verifyBtn.disabled = true;
+                initImageGrid(); // Reinitialize with new images
+            }
+        });
+
+        // Photo strip functionality from Game Boy code
+        photoBtn.addEventListener('click', startPhotoShow);
+
+        function startPhotoShow() {
+            photoBtn.textContent = 'PRINTING...';
+            photoBtn.disabled = true;
+            progressDiv.textContent = 'INITIALIZING CAMERA...';
+            
+            // Create photo frames HTML
+            let framesHTML = '';
+            for (let i = 0; i < photos.length; i++) {
+                framesHTML += `
+                    <div class="photo-frame" id="frame-${i + 1}">
+                        <div class="photo-content">READY</div>
+                    </div>
+                `;
+                
+            }
+            
+            // Create vertical photo strip container
+            const photoStripHTML = `
+                <div class="photo-strip">
+                    <div class="photo-strip-header">PHOTOSTRIP SESSION</div>
+                    <div class="photo-frames-container">
+                        ${framesHTML}
+                    </div>
+                    <div class="photo-strip-footer">STORY OF US</div>
+                </div>
+                <div class="scroll-indicator">⬇ Scroll Down ⬇</div>
+            `;
+            
+            photoDisplay.innerHTML = photoStripHTML;
+            currentPhotoIndex = 0;
+            
+            // Countdown before starting
+            let countdown = 3;
+            progressDiv.textContent = `GET READY... ${countdown}`;
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    progressDiv.textContent = `GET READY... ${countdown}`;
+                } else {
+                    clearInterval(countdownInterval);
+                    progressDiv.textContent = 'CHEESE!';
+                    startPhotoCapture();
+                }
+            }, 1000);
+        }
+
+        function startPhotoCapture() {
+            const framesContainer = document.querySelector('.photo-frames-container');
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            
+            const captureInterval = setInterval(() => {
+                if (currentPhotoIndex < photos.length) {
+                    const frameId = `frame-${currentPhotoIndex + 1}`;
+                    const frame = document.getElementById(frameId);
+                    
+                    if (frame) {
+                        // Flash effect
+                        progressDiv.textContent = 'FLASH!';
+                        
+                        // Auto scroll to current photo
+                        setTimeout(() => {
+                            if (framesContainer) {
+                                try {
+                                    const frameTop = frame.offsetTop - framesContainer.offsetTop;
+                                    const containerHeight = framesContainer.clientHeight;
+                                    const frameHeight = frame.clientHeight;
+                                    
+                                    const scrollPosition = frameTop - (containerHeight / 2) + (frameHeight / 2);
+                                    
+                                    framesContainer.scrollTo({
+                                        top: scrollPosition,
+                                        behavior: 'smooth'
+                                    });
+                                } catch (error) {
+                                    console.log('Scroll error:', error);
+                                    const frameTop = frame.offsetTop - framesContainer.offsetTop;
+                                    framesContainer.scrollTop = frameTop - (framesContainer.clientHeight / 2);
+                                }
+                            }
+                        }, 200);
+                        
+                        // Update frame content with image
+                        setTimeout(() => {
+                            frame.classList.add('filled');
+                            
+                            const photo = photos[currentPhotoIndex];
+                            frame.innerHTML = `
+    <img src="${photo.image}" class="photo-image" />
+`;
+                            
+                            const displayCount = currentPhotoIndex + 1;
+                            progressDiv.textContent = `CAPTURED ${displayCount}/${photos.length}`;
+                            
+                            if (currentPhotoIndex < photos.length - 1 && scrollIndicator) {
+                                scrollIndicator.style.display = 'block';
+                            }
+                            
+                            currentPhotoIndex++;
+                            
+                        }, 500);
+                    } else {
+                        currentPhotoIndex++;
+                    }
+                    
+                } else {
+                    clearInterval(captureInterval);
+                    
+                    if (scrollIndicator) {
+                        scrollIndicator.style.display = 'none';
+                    }
+                    
+                    setTimeout(() => {
+                        if (framesContainer) {
+                            try {
+                                framesContainer.scrollTo({ top: 0, behavior: 'smooth' });
+                            } catch (error) {
+                                framesContainer.scrollTop = 0;
+                            }
+                        }
+                    }, 1000);
+                    
+                    setTimeout(() => {
+                        progressDiv.textContent = 'PHOTO STRIP COMPLETE!';
+                        photoBtn.textContent = 'PRINT AGAIN';
+                        photoBtn.disabled = false;
+                        
+                        // Reset for new session
+                        photoBtn.removeEventListener('click', startPhotoShow);
+                        photoBtn.addEventListener('click', startNewSession);
+                    }, 2000);
+                }
+            }, 2500);
+        }
+
+        function startNewSession() {
+            console.log('=== STARTING NEW SESSION ===');
+            
+            // Reset for new session
+            progressDiv.textContent = 'READY TO PRINT';
+            photoBtn.textContent = 'START PRINT';
+            
+            // Remove old listener and add original
+            photoBtn.removeEventListener('click', startNewSession);
+            photoBtn.addEventListener('click', startPhotoShow);
+            
+            // Clear display
+            photoDisplay.innerHTML = '<div class="photo-placeholder">Press START PRINT to begin photo session</div>';
+            
+            // Reset photo index
+            currentPhotoIndex = 0;
+        }
+
+        // Initialize the page
+        initImageGrid();
+    </script>
+</body>
+</html>
